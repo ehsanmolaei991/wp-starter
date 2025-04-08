@@ -94,4 +94,146 @@ Now your server is ready to accept deployments from GitHub.
 
 ---
 
-Just purchase a VPS, follow the instructions and come back to set up CI/CD once your server is ready.
+If you haven't yet purchased a VPS, you can follow the instructions later and come back to set up CI/CD once your server is ready.
+
+
+---
+
+## 💾 Backup Your Database
+
+To take a database backup from your Docker-based WordPress instance:
+
+1. Run this command:
+   ```bash
+   ./scripts/backup-db.sh
+   ```
+
+2. The backup will be saved in the `backups/` directory with a timestamped filename.
+
+### 🔁 Optional Cronjob (on server):
+
+To take automatic daily backups at 3 AM, add this line to your crontab:
+```bash
+0 3 * * * /home/username/wp-starter/scripts/backup-db.sh >> /home/username/wp-starter/backups/backup.log 2>&1
+```
+
+
+
+---
+
+## 🗃️ Backup wp-content/uploads
+
+To take a backup of your media files (uploads):
+
+```bash
+./scripts/backup-uploads.sh
+```
+
+The backup will be saved as a `.tar.gz` file in the `backups/` folder.
+
+---
+
+## ♻️ Restore Database from Backup
+
+To restore a database backup:
+
+```bash
+./scripts/restore-db.sh backups/db-backup-YYYY-MM-DD-HHMM.sql
+```
+
+Make sure to replace the filename with your actual backup file.
+
+
+
+---
+
+## ♻️ Restore wp-content/uploads
+
+To restore your uploads (media files) from a backup:
+
+```bash
+./scripts/restore-uploads.sh backups/uploads-backup-YYYY-MM-DD-HHMM.tar.gz
+```
+
+This will extract the backup and replace your `wp-content/uploads` folder with the contents of the archive.
+
+
+---
+
+## 🔐 .htaccess Security & Optimization
+
+A sample `.htaccess` file is included under `wp-content/` with the following rules:
+
+- `Options -Indexes`: Prevents listing of files in folders.
+- Denies access to sensitive files like `wp-config.php` and `.htaccess`.
+- Optionally restricts `wp-login.php` access to your IP.
+- Enables **GZIP compression** for faster page loads.
+- Enables **browser caching** for images, CSS, and JS to improve speed.
+
+📍 Make sure your web server supports `.htaccess` (e.g., Apache). If using Nginx, similar rules must be applied in your server config.
+
+---
+
+## 🌐 Optional Nginx Reverse Proxy
+
+If you want to run WordPress behind an **Nginx reverse proxy**, this project supports it via an optional file:
+
+- `docker-compose.nginx.yml`: Defines the Nginx service
+- `nginx/nginx.conf`: Custom reverse proxy configuration
+
+### 🔧 How to run with Nginx:
+
+```bash
+# Run only WordPress + MySQL (default)
+docker-compose up -d
+
+# Run with Nginx as a reverse proxy (recommended for production setup)
+docker-compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+```
+
+This will expose WordPress at:
+- http://localhost:8085 (via Nginx)
+
+
+---
+
+## ⚙️ Advanced Nginx Configuration (Production Ready)
+
+This project includes a fully customizable `nginx.conf` with:
+
+- ✅ GZIP compression enabled
+- ✅ Cache headers (`Cache-Control`, `Expires`)
+- ✅ Rate limiting on login and sensitive paths
+- ✅ Denial of access to sensitive files (`.env`, `.git`, `.ht*`)
+- ✅ IP restriction on `/wp-login.php` (customizable)
+- 🔐 Ready to be extended for HTTPS + Let's Encrypt
+
+### How to use
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+```
+
+You can modify the Nginx rules inside `nginx/nginx.conf` to suit your needs.
+
+🔄 HTTPS setup with Let's Encrypt will be scripted separately and documented soon.
+
+
+
+---
+
+## 🚀 Initial Setup Script
+
+To simplify the first run of the project, use the script:
+
+```bash
+./scripts/init.sh
+```
+
+It will:
+- Ensure `.env` exists
+- Create `backups/` and `scripts/` folders if missing
+- Make all `.sh` scripts executable
+- Ask whether to launch with Nginx or not
+- Run Docker containers accordingly
+- Show access URLs and basic status info
