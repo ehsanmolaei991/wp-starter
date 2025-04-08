@@ -21,7 +21,7 @@ read -p "🧩 Do you want to include Nginx reverse proxy? (y/n): " use_nginx
 
 if [ "$use_nginx" == "y" ]; then
   echo "📦 Starting Docker Compose with Nginx..."
-  docker-compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+  docker-compose -f docker-compose.nginx.yml up -d
 else
   echo "📦 Starting Docker Compose without Nginx..."
   docker-compose up -d
@@ -31,7 +31,7 @@ fi
 sleep 3
 if docker ps | grep wordpress_container > /dev/null; then
   echo "✅ WordPress container is running."
-  echo "🌐 Access your site at: http://localhost:8080"
+  echo "🌐 Access your site at: http://localhost:80"
 else
   echo "❌ WordPress container not running. Please check docker logs."
 fi
