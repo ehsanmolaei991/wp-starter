@@ -3,7 +3,7 @@ name: Deploy WordPress with Docker
 on:
   push:
     branches:
-      - main
+      # - main
 
 jobs:
   deploy:
