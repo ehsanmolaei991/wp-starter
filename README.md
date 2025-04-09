@@ -188,7 +188,7 @@ If you want to run WordPress behind an **Nginx reverse proxy**, this project sup
 docker-compose up -d
 
 # Run with Nginx as a reverse proxy (recommended for production setup)
-docker-compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+docker-compose -f docker-compose.nginx.yml up -d
 ```
 
 This will expose WordPress at:
@@ -211,7 +211,7 @@ This project includes a fully customizable `nginx.conf` with:
 ### How to use
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+docker-compose -f docker-compose.nginx.yml up -d
 ```
 
 You can modify the Nginx rules inside `nginx/nginx.conf` to suit your needs.
